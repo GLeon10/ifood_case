@@ -15,9 +15,6 @@ ENV/
 data/raw/
 data/processed/
 
-# Outputs (generated artifacts)
-outputs/charts/
-outputs/tables/
 
 # OS / editor
 .DS_Store

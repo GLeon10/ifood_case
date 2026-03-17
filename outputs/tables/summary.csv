@@ -1,0 +1,2 @@
+t_test_p_value,t_test_ci_low,t_test_ci_high,t_test_significant,prop_test_p_value,prop_test_ci_low,prop_test_ci_high,prop_test_significant,incremental_gmv,incremental_revenue,coupon_cost,net_profit
+0.47320417464150777,-0.4043540747829035,0.18768812774857446,False,,0.0,0.0,False,7827966.562439498,1174194.9843659245,4459090.0,-3284895.0156340757
