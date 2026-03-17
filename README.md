@@ -1,85 +1,192 @@
-ifood_case – Análise de Teste A/B de Cupom
 
-Visão geral
------------
+# 🍔 iFood Case – Análise de Teste A/B de Cupom
 
-Este projeto é uma pipeline analítica completa, em nível de produção, para um teste A/B
-avaliando uma campanha de cupom no contexto do iFood. A solução faz ingestão dos dados
-brutos, constrói uma tabela fato analítica, calcula métricas RFM em nível de cliente,
-executa a análise do teste A/B (incluindo testes estatísticos e avaliação financeira),
-cria segmentos de usuários e gera visualizações e tabelas com os principais insights
-de negócio.
+## 📌 Visão geral
 
-Estrutura do projeto
---------------------
+Este projeto implementa uma pipeline analítica completa, em nível de produção, para avaliar um teste A/B de uma campanha de cupons no contexto do iFood.
 
-- `data/raw/` – arquivos brutos baixados (pedidos em JSON, consumidores, restaurantes, referência do teste A/B)
-- `data/processed/` – datasets analíticos processados como `fact_orders` e `customer_metrics`
-- `src/` – código-fonte Python
-  - `ingestion.py` – download de arquivos, extração e carregamento em streaming
-  - `processing.py` – limpeza de dados e preparação da tabela `fact_orders`
-  - `feature_engineering.py` – métricas RFM em nível de cliente
-  - `ab_test.py` – métricas do teste A/B, testes estatísticos e análise financeira
-  - `segmentation.py` – segmentação RFM e desempenho do teste por segmento
-  - `visualization.py` – gráficos das principais métricas e segmentos
-  - `pipeline.py` – script de orquestração ponta a ponta
-- `notebooks/analysis.ipynb` – análise exploratória e narrativa de negócio
-- `outputs/charts/` – gráficos PNG gerados
-- `outputs/tables/` – arquivos CSV (métricas do teste, métricas por segmento, resumo estatístico e financeiro)
+A solução cobre todo o fluxo de dados:
 
-Fontes de dados
----------------
+* ingestão de dados brutos
+* transformação e modelagem analítica
+* cálculo de métricas de cliente (RFM)
+* análise estatística do teste A/B
+* avaliação de impacto financeiro
+* segmentação de usuários
+* geração de outputs analíticos (tabelas e gráficos)
 
-- Pedidos: `https://data-architect-test-source.s3-sa-east-1.amazonaws.com/order.json.gz`
-- Consumidores: `https://data-architect-test-source.s3-sa-east-1.amazonaws.com/consumer.csv.gz`
-- Restaurantes: `https://data-architect-test-source.s3-sa-east-1.amazonaws.com/restaurant.csv.gz`
-- Referência do teste A/B: `https://data-architect-test-source.s3-sa-east-1.amazonaws.com/ab_test_ref.tar.gz`
+---
 
-Como executar
--------------
+## ⚠️ Observação importante sobre o repositório
 
-1. **Criar e ativar um ambiente virtual (recomendado)**  
-   Use a ferramenta de sua preferência (`venv`, `conda`, etc.).
+Este repositório **não inclui dados brutos, datasets processados nem outputs gerados**, pois esses arquivos estão listados no `.gitignore` para evitar versionamento de grandes volumes de dados.
 
-2. **Instalar dependências**
+Itens não versionados:
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+* `data/raw/` – dados brutos
+* `data/processed/` – tabelas analíticas geradas
+* `outputs/charts/` – gráficos
+* `outputs/tables/` – resultados do teste
 
-3. **Rodar a pipeline ponta a ponta**
+👉 Ou seja: **o repositório contém apenas o código e a estrutura do projeto**, sendo necessário executar a pipeline para reproduzir os resultados.
 
-   A partir da raiz do projeto:
+---
 
-   ```bash
-   python -m src.pipeline
-   ```
+## 🗂️ Estrutura do projeto
 
-   Isso irá:
+```
+.
+├── data/
+│   ├── raw/                # (ignorado) dados brutos
+│   └── processed/          # (ignorado) dados processados
+├── src/
+│   ├── ingestion.py        # ingestão e download dos dados
+│   ├── processing.py       # limpeza e criação da fact_orders
+│   ├── feature_engineering.py  # métricas RFM
+│   ├── ab_test.py          # análise estatística e financeira
+│   ├── segmentation.py     # segmentação de clientes
+│   ├── visualization.py    # geração de gráficos
+│   └── pipeline.py         # orquestração ponta a ponta
+├── notebooks/
+│   └── analysis.ipynb      # análise exploratória e narrativa
+├── outputs/
+│   ├── charts/             # (ignorado) gráficos gerados
+│   └── tables/             # (ignorado) tabelas de saída
+└── README.md
+```
 
-   - baixar e extrair dados brutos em `data/raw/`
-   - construir `fact_orders.csv` e `customer_metrics.csv` em `data/processed/`
-   - calcular métricas do teste A/B, testes estatísticos e viabilidade financeira do cupom
-   - salvar tabelas-resumo em `outputs/tables/`
-   - gerar gráficos em `outputs/charts/`
+---
 
-4. **Abrir o notebook de análise**
+## 📊 Fontes de dados
 
-   Inicie o Jupyter e abra `notebooks/analysis.ipynb` para seguir a narrativa da análise:
+Os dados são baixados automaticamente pela pipeline a partir das seguintes fontes:
 
-   ```bash
-   jupyter notebook
-   ```
+* Pedidos
+  [https://data-architect-test-source.s3-sa-east-1.amazonaws.com/order.json.gz](https://data-architect-test-source.s3-sa-east-1.amazonaws.com/order.json.gz)
 
-Resumo da análise (alto nível)
-------------------------------
+* Consumidores
+  [https://data-architect-test-source.s3-sa-east-1.amazonaws.com/consumer.csv.gz](https://data-architect-test-source.s3-sa-east-1.amazonaws.com/consumer.csv.gz)
 
-A análise foca em:
+* Restaurantes
+  [https://data-architect-test-source.s3-sa-east-1.amazonaws.com/restaurant.csv.gz](https://data-architect-test-source.s3-sa-east-1.amazonaws.com/restaurant.csv.gz)
 
-- medir **conversão, pedidos por usuário, GMV e ticket médio (AOV)** entre grupo controle e tratamento
-- verificar se as diferenças observadas são **estatisticamente significativas**
-- calcular **GMV incremental, receita incremental, custo de cupom e lucro líquido** da campanha
-- construir **segmentos RFM** (Champions, Loyal, Potential, At Risk, Low Engagement)
-- identificar quais segmentos apresentam **maior uplift** e são mais atrativos para campanhas futuras
+* Referência do teste A/B
+  [https://data-architect-test-source.s3-sa-east-1.amazonaws.com/ab_test_ref.tar.gz](https://data-architect-test-source.s3-sa-east-1.amazonaws.com/ab_test_ref.tar.gz)
 
-Os resultados detalhados podem ser vistos no notebook e nos arquivos CSV/PNG gerados.
+---
+
+## 🚀 Como executar
+
+### 1. Criar ambiente virtual
+
+```bash
+python -m venv .venv
+source .venv/bin/activate  # Linux/Mac
+.venv\Scripts\activate     # Windows
+```
+
+### 2. Instalar dependências
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Executar a pipeline
+
+```bash
+python -m src.pipeline
+```
+
+A execução irá:
+
+* baixar e extrair os dados
+* gerar datasets analíticos (`fact_orders`, `customer_metrics`)
+* calcular métricas do teste A/B
+* executar testes estatísticos
+* calcular impacto financeiro da campanha
+* gerar tabelas e gráficos
+
+---
+
+## 📈 Escopo da análise
+
+A análise cobre:
+
+### Métricas principais
+
+* Taxa de conversão
+* Pedidos por usuário
+* GMV (Gross Merchandise Value)
+* Ticket médio (AOV)
+
+### Estatística
+
+* Testes de significância entre controle vs tratamento
+* Validação de uplift
+
+### Financeiro
+
+* GMV incremental
+* Receita incremental
+* Custo de cupons
+* Lucro líquido da campanha
+
+### Segmentação
+
+* RFM (Recency, Frequency, Monetary)
+
+* Segmentos:
+
+  * Champions
+  * Loyal
+  * Potential
+  * At Risk
+  * Low Engagement
+
+* Avaliação de desempenho por segmento
+
+---
+
+## 📊 Outputs gerados
+
+Após execução da pipeline:
+
+* `outputs/tables/`
+
+  * métricas do teste A/B
+  * resultados estatísticos
+  * análise financeira
+  * desempenho por segmento
+
+* `outputs/charts/`
+
+  * gráficos comparativos
+  * visualizações de segmentos
+
+---
+
+## 📓 Notebook de análise
+
+Para uma visão mais interpretativa e orientada a negócio:
+
+```bash
+jupyter notebook
+```
+
+Abra:
+
+```
+notebooks/analysis.ipynb
+```
+
+---
+
+## 💡 Observação final
+
+Este projeto foi estruturado seguindo boas práticas de engenharia de dados e analytics engineering, com foco em:
+
+* reprodutibilidade
+* modularização
+* clareza analítica
+* separação entre código e dados
+
