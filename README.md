@@ -50,8 +50,8 @@ Itens não versionados:
 ├── notebooks/
 │   └── analysis.ipynb      # análise exploratória e narrativa
 ├── outputs/
-│   ├── charts/             # (ignorado) gráficos gerados
-│   └── tables/             # (ignorado) tabelas de saída
+│   ├── charts/             # gráficos gerados
+│   └── tables/             # tabelas de saída
 └── README.md
 ```
 
