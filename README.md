@@ -19,14 +19,12 @@ A solução cobre todo o fluxo de dados:
 
 ## ⚠️ Observação importante sobre o repositório
 
-Este repositório **não inclui dados brutos, datasets processados nem outputs gerados**, pois esses arquivos estão listados no `.gitignore` para evitar versionamento de grandes volumes de dados.
+Este repositório **não inclui dados brutos e datasets processados**, pois esses arquivos estão listados no `.gitignore` para evitar versionamento de grandes volumes de dados.
 
 Itens não versionados:
 
 * `data/raw/` – dados brutos
 * `data/processed/` – tabelas analíticas geradas
-* `outputs/charts/` – gráficos
-* `outputs/tables/` – resultados do teste
 
 👉 Ou seja: **o repositório contém apenas o código e a estrutura do projeto**, sendo necessário executar a pipeline para reproduzir os resultados.
 
